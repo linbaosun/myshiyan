@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			*{
+		     margin: 0px;
+		     padding: 0px;
+			 background-color: wheat;
+			}
+			#box{
+				margin: 50px auto;
+				width: 500px;
+				/* border: 5px deeppink solid; */
+			}
+			#box1{
+				width: 360px;
+				height: 270px;
+				 /* background-image: url(audio/1.jpg); 
+				  background-position: no-repeat;
+				 background-size: contain; */
+				border-radius: 80px;
+				margin: 10px;
+			}
+			#pre{
+				width: 300px;
+				height: 10px;
+				background-color: grey;
+				border-radius: 2px;
+				margin: 10px;
+				position: relative;
+				cursor: pointer;
+			}
+			#btn{
+				width: 12px;
+				height: 16px;
+				background-color: red;
+				border-radius: 50%;
+				position: absolute;
+				left: 0px;
+				
+			}
+			input{
+				
+				width: 60px;
+				height: 40px;
+				margin: 10px;
+				border-radius: 20px;
+				color: black;
+				background-color: palevioletred;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="box">
+		<div id="box1"></div>
+		<audio src="" >		
+		</audio>
+		<p> <em>00:00</em>/<span>00:00</span> </p>
+		<div id="pre">
+			<div id="btn"></div>
+		</div>
+		<input type="button" value="上一首" />
+		<input type="button"  value="播放" />
+		<input type="button"  value="下一首"/>
+		<input type="button" value="顺序播放"/>
+		
+		</div>
+	</body>
+	<script>
+		var Aaudio = document.getElementsByTagName('audio')[0];
+		var Aem = document.getElementsByTagName('em')[0];
+		var Aspan = document.getElementsByTagName('span')[0];
+		var Ainp = document.getElementsByTagName('input');
+		var oBOX1 = document.getElementById('box1');
+		var opre = document.getElementById('pre');
+		var obtn = document.getElementById('btn');
+		console.log(Ainp);
+		console.dir(Aaudio)
+		console.log(Aaudio.currentTime)
+		//设置一个开关
+		var onoff = true;
+		//设置一个变量
+		var num = 0;
+		
+		//初始化配置
+		//在数组中方式两个对象用来存储两首歌和图片
+		var  getmusic = [{
+			name:"audio/1.mp3",
+			pic:"audio/1.jpg"
+		    },{
+			name:"audio/2.mp3",
+			pic:"audio/2.jpg"
+			}   
+		];
+		init();
+		function init(){
+			Aaudio.src = getmusic[num].name;
+			oBOX1.style.backgroundImage = 'url( '+getmusic[num].pic +')'; 
+			oBOX1.style.backgroundSize = 'cover';
+			oBOX1.style.backgroundPosition ='no-repeat';
+		
+		}
+		
+
+		//单击播放按钮让音乐播放
+		Ainp[1].onclick = function(){
+			if(Aaudio.paused){//是真的 说明没有播放进来
+			this.value = "暂停";
+			//音乐播放
+			Aaudio.play();	
+			}else{
+				this.value="播放";
+				//音乐暂停
+				Aaudio.pause();
+			}
+		}
+		
+		//设置时间/    currentTime   当前的事件   duration
+		Aaudio.addEventListener('timeupdate',function(){
+			console.log(Aaudio.currentTime);
+			console.log(Aaudio.duration);
+			
+			var cur = zero(Math.floor(Aaudio.currentTime / 60))  + ":" +  zero( Math.round(Aaudio.currentTime % 60));
+			var tol =  (zero( Math.floor(Aaudio.duration /60)) || "00" ) + ":" + ( zero(Math.round(Aaudio.duration %60)) || '00' ) ;
+			Aem.innerHTML = cur;
+			Aspan.innerHTML = tol;
+			//计算比例  当前时间 / 总的shijian   = 当前小盒子的位置 / 当前小盒子可移动的总长度
+			//得到当前小盒子的位置
+			//让小盒子 跟着音乐播放移动
+			var scale =  Aaudio.currentTime / Aaudio.duration;
+			obtn.style.left =  parseInt( scale  * 288 ) + 'px';
+			
+			
+		},false)
+		
+		//封装补零函数
+		function zero(m){
+			return m < 10? "0"+m :m;
+		}
+		
+		
+		//单击下一首
+		
+		Ainp[2].onclick = function(){
+			if(onoff){ //真的进来  走这里
+				num++;
+				if(num > getmusic.length-1){
+					num=0;	
+				}	
+			}else{  //假的  走随机
+			  num =  Math.round(Math.random()*getmusic.length);	
+			}
+			init();
+			Ainp[1].value ="暂停";
+			Aaudio.play();
+			
+		}
+		//单击上一首
+		Ainp[0].onclick = function(){
+			if(onoff){ //真的走这里
+				num--;
+				if(num<0){
+					num = getmusic.length-1;
+					
+				}
+			}else{  //假的  走随机
+				 num =  Math.round(Math.random()*getmusic.length);
+			}
+			init();
+			Ainp[1].value = "暂停"
+			Aaudio.play();
+		}
+		
+		//切换播放
+		Ainp[3].onclick = function(){
+			if(onoff){
+			  this.value="随机播放";
+			  
+			}else{
+				this.value = "顺序播放";
+			}
+			onoff = !onoff
+		}
+		//滑动小滑块
+		
+			
+		
+		obtn.addEventListener('mousedown',function(e){
+			e = e ||event;
+			//获取盒子与鼠标的相对距离
+			var disk = e.clientX - obtn.offsetLeft;
+			
+			
+			
+			//在pre 盒子中移动小盒子  因为用了addaddEventListener 方法   所以移除的时候  需要先把函数
+			//封装一下 不然不知道移除那个
+			function drag(e){
+				e = e || event;
+				var l = e.clientX - disk;
+				
+				//设置小盒子移动的范围
+				l = l < 0 ? 0 : l;
+				l = l > 288 ? 288 : l;
+				obtn.style.left = l + 'px';	
+				//改变位置的同时  应该 按照比例 把相应的时间 对应相应的位子   拖拽小盒子 让音乐快进
+				//比例  当前的位置 / 总的移动位置  = 当前的时间 / 总的时间
+				var sca = l /288 // 小盒子拖拽后的位置
+				var cur = Aaudio.duration * sca  //算出当前时间   
+				// Aaudio.fastSeek(cur);   //谷歌不支持这个方法 所以要改变一下
+				if('fastSeek' in Aaudio ){
+					
+					Aaudio.fastSeek(cur)
+				}else{
+					Aaudio.currentTime = cur;
+				}
+				 
+			}
+		
+		
+			opre.addEventListener('mousemove', drag);
+					
+			//当鼠标弹起的时候移除mousemove   事件
+		  opre.addEventListener('mouseup',function(){
+			  opre.removeEventListener('mousemove', drag)
+		  })
+			
+		})
+		
+		
+	</script>
+</html>
