@@ -1,0 +1,89 @@
+/* 
+    所谓媒体查询的意思就是根据浏览器的逻辑像素，配合理想视口布局达到在不同屏幕的逻辑像素分辨率里
+    做到响应式布局的排版效果
+    媒体查询使用的排版单位也是rem，rem和px的区别在于rem是针对当前根标签的font-size来做rem单位的基准值的
+*/
+/* 414=>逻辑像素>411 */
+@media only screen and (max-width: 414px), only screen and (max-device-width: 414px) {
+	html,
+	body {
+		font-size: 20.7px;
+	}
+}
+/* 411=>逻辑像素>400 */
+@media only screen and (max-width: 411px), only screen and (max-device-width: 411px) {
+	html,
+	body {
+		font-size: 20.55px;
+	}
+}
+/* 400=>逻辑像素>375 */
+@media only screen and (max-width: 400px), only screen and (max-device-width: 400px) {
+	html,
+	body {
+		font-size: 20px;
+	}
+}
+
+@media only screen and (max-width: 375px), only screen and (max-device-width: 375px) {
+	html,
+	body {
+		font-size: 18.75px;
+	}
+}
+
+@media only screen and (max-width: 360px), only screen and (max-device-width: 360px) {
+	html,
+	body {
+		font-size: 18px;
+	}
+}
+
+@media only screen and (max-width: 320px), only screen and (max-device-width: 320px) {
+	html,
+	body {
+		font-size: 16px;
+	}
+}
+
+@media only screen and (max-width: 240px), only screen and (max-device-width: 240px) {
+	html,
+	body {
+		font-size: 12px;
+	}
+}
+
+body,
+html,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ul,
+ol,
+li,
+a,
+input,
+select,
+textarea,
+p,
+img {
+	margin: 0;
+	padding: 0;
+	color: #666;
+}
+
+a {
+	display: inline-block;
+	text-decoration: none;
+	color: #666;
+}
+
+ul,
+ol {
+	list-style-type: none;
+}
